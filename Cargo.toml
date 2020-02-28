@@ -1,0 +1,10 @@
+[package]
+name = "hello-nannou"
+version = "0.0.0"
+authors = ["Noah Rosenzweig <rosenzweig.noah@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+derive_builder = "0.9.0"
+nannou = "0.12.0"
+rand = "0.7.3"
