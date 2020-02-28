@@ -81,6 +81,7 @@ fn update(app: &App, model: &mut Model, update: Update) {
     let mut rng = rand::thread_rng();
 
     let mouse = &app.mouse;
+    let mouse_pos = Point2::new(mouse.x, mouse.y);
 
     let gen_coord =
         |rng: &mut ThreadRng| -> f32 { rng.gen_range(-100.0, 100.0) * dt };
@@ -98,7 +99,10 @@ fn update(app: &App, model: &mut Model, update: Update) {
 
         // follow mouse cursor
         if mouse.window.is_some() {
-            let mult = if mouse.buttons.left().is_down() {
+            let mult = if mouse.buttons.left().is_down()
+                && block.pos.distance(mouse_pos) < 100.0
+            {
+                // push block away from cursor
                 -gen_move_mult(&mut rng)
             } else {
                 gen_move_mult(&mut rng)
