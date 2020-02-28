@@ -3,14 +3,22 @@ extern crate derive_builder;
 extern crate nannou;
 extern crate rand;
 
+use nannou::draw::Draw;
 use nannou::prelude::*;
 use rand::prelude::*;
 
 #[derive(Builder)]
 #[builder(pattern = "owned")]
 struct Block {
-    pos:  Point2,
-    size: Vector2,
+    pos:   Point2,
+    size:  Vector2,
+    color: Rgb,
+}
+
+impl Block {
+    pub fn draw(&self, draw: &Draw) {
+        draw.rect().color(self.color).xy(self.pos).wh(self.size);
+    }
 }
 
 #[derive(Default)]
@@ -26,15 +34,22 @@ impl Model {
             |rng: &mut ThreadRng| -> f32 { rng.gen_range(-300.0, 300.0) };
         let gen_size =
             |rng: &mut ThreadRng| -> f32 { rng.gen_range(-50.0, 50.0) };
+        let gen_color =
+            |rng: &mut ThreadRng| -> f32 { rng.gen_range(0.0, 1.0) };
 
         let mut model = Self::default();
 
-        for i in (0 .. 10) {
+        for i in 0 .. 10 {
             let i = i as f32;
             model.blocks.push(
                 BlockBuilder::default()
                     .pos(Point2::new(i * 20.0, i * 10.5))
                     .size(Vector2::new(10.0 + i * 3.0, 7.0 + i * 4.0))
+                    .color(Rgb::new(
+                        gen_color(&mut rng),
+                        gen_color(&mut rng),
+                        gen_color(&mut rng),
+                    ))
                     .build()
                     .unwrap(),
             );
@@ -43,6 +58,11 @@ impl Model {
                 BlockBuilder::default()
                     .pos(Point2::new(gen_coord(&mut rng), gen_coord(&mut rng)))
                     .size(Vector2::new(gen_size(&mut rng), gen_size(&mut rng)))
+                    .color(Rgb::new(
+                        (i * 0.1) % 1.0,
+                        (i * 0.1) % 1.0,
+                        (i * 0.1) % 1.0,
+                    ))
                     .build()
                     .unwrap(),
             );
@@ -85,7 +105,7 @@ fn render(app: &App, model: &Model, frame: &Frame) {
     draw.background().color(DARKGRAY);
 
     for block in model.blocks.iter() {
-        draw.rect().color(RED).xy(block.pos).wh(block.size);
+        block.draw(&draw);
     }
 
     // Write to the window frame.
