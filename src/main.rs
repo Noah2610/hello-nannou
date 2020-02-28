@@ -79,9 +79,11 @@ fn main() {
         .run();
 }
 
-fn update(_app: &App, model: &mut Model, update: Update) {
+fn update(app: &App, model: &mut Model, update: Update) {
     let dt = update.since_last.as_secs_f32();
     let mut rng = rand::thread_rng();
+
+    let mouse = &app.mouse;
 
     let gen_coord =
         |rng: &mut ThreadRng| -> f32 { rng.gen_range(-100.0, 100.0) * dt };
@@ -89,10 +91,23 @@ fn update(_app: &App, model: &mut Model, update: Update) {
         |rng: &mut ThreadRng| -> f32 { rng.gen_range(-30.0, 30.0) * dt };
 
     for block in model.blocks.iter_mut() {
+        // jitter around
         block.pos.x += gen_coord(&mut rng);
         block.pos.y += gen_coord(&mut rng);
         block.size.x += gen_size(&mut rng);
         block.size.y += gen_size(&mut rng);
+
+        // follow mouse cursor
+        if mouse.window.is_some() {
+            let mult = if mouse.buttons.left().is_down() {
+                -1.0
+            } else {
+                1.0
+            };
+
+            block.pos.x += (mouse.x - block.pos.x).signum() * mult * 50.0 * dt;
+            block.pos.y += (mouse.y - block.pos.y).signum() * mult * 50.0 * dt;
+        }
     }
 }
 
