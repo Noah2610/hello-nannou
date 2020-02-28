@@ -84,9 +84,9 @@ fn update(_app: &App, model: &mut Model, update: Update) {
     let mut rng = rand::thread_rng();
 
     let gen_coord =
-        |rng: &mut ThreadRng| -> f32 { rng.gen_range(-10.0, 10.0) * dt };
+        |rng: &mut ThreadRng| -> f32 { rng.gen_range(-100.0, 100.0) * dt };
     let gen_size =
-        |rng: &mut ThreadRng| -> f32 { rng.gen_range(-3.0, 3.0) * dt };
+        |rng: &mut ThreadRng| -> f32 { rng.gen_range(-30.0, 30.0) * dt };
 
     for block in model.blocks.iter_mut() {
         block.pos.x += gen_coord(&mut rng);
