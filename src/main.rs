@@ -86,6 +86,8 @@ fn update(app: &App, model: &mut Model, update: Update) {
         |rng: &mut ThreadRng| -> f32 { rng.gen_range(-100.0, 100.0) * dt };
     let gen_size =
         |rng: &mut ThreadRng| -> f32 { rng.gen_range(-30.0, 30.0) * dt };
+    let gen_move_mult =
+        |rng: &mut ThreadRng| -> f32 { rng.gen_range(0.0, 200.0) * dt };
 
     for block in model.blocks.iter_mut() {
         // jitter around
@@ -97,13 +99,13 @@ fn update(app: &App, model: &mut Model, update: Update) {
         // follow mouse cursor
         if mouse.window.is_some() {
             let mult = if mouse.buttons.left().is_down() {
-                -1.0
+                -gen_move_mult(&mut rng)
             } else {
-                1.0
+                gen_move_mult(&mut rng)
             };
 
-            block.pos.x += (mouse.x - block.pos.x).signum() * mult * 50.0 * dt;
-            block.pos.y += (mouse.y - block.pos.y).signum() * mult * 50.0 * dt;
+            block.pos.x += (mouse.x - block.pos.x).signum() * mult;
+            block.pos.y += (mouse.y - block.pos.y).signum() * mult;
         }
     }
 }
